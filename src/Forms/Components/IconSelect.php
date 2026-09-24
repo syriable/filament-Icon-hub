@@ -65,6 +65,21 @@ class IconSelect extends Select
 
         $this->rule(static fn (IconSelect $component): ValidIcon => new ValidIcon($component->getProviderIds()));
 
+        // Convert legacy "provider:name" values to the configured format so
+        // the selected option matches the options offered.
+        $this->afterStateHydrated(static function (IconSelect $component, mixed $state): void {
+            $registry = app(IconRegistry::class);
+
+            if (is_string($state) && $state !== '') {
+                $component->state($registry->normalizeValue($state));
+            } elseif (is_array($state)) {
+                $component->state(array_values(array_unique(array_map(
+                    static fn (mixed $value): mixed => is_string($value) ? $registry->normalizeValue($value) : $value,
+                    $state,
+                ))));
+            }
+        });
+
         $this->extraAttributes(static fn (IconSelect $component): array => [
             'class' => $component->isGrid() ? 'fi-icon-hub-select fi-icon-hub-select-grid' : 'fi-icon-hub-select',
         ], merge: true);
@@ -192,8 +207,10 @@ class IconSelect extends Select
         foreach ($page->icons as $icon) {
             $label = $this->renderOptionLabel($icon);
 
-            $grouped[$this->providerLabel($icon->provider)][$icon->key()] = $label;
-            $flat[$icon->key()] = $label;
+            $value = $this->registry()->storedValue($icon);
+
+            $grouped[$this->providerLabel($icon->provider)][$value] = $label;
+            $flat[$value] = $label;
         }
 
         return $this->isGroupedByProvider() ? $grouped : $flat;

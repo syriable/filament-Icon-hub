@@ -178,9 +178,11 @@ abstract class IndexedIconProvider implements IconProvider
     }
 
     /**
-     * Recursively list SVG files as relative path (without extension) => absolute path.
+     * Recursively list SVG files as relative path (without extension) and
+     * absolute path pairs. A list (not a map) so numeric file names such as
+     * "123.svg" stay strings.
      *
-     * @return array<string, string>
+     * @return list<array{name: string, path: string}>
      */
     protected function scanSvgFiles(string $directory): array
     {
@@ -193,7 +195,7 @@ abstract class IndexedIconProvider implements IconProvider
 
         foreach ($finder as $file) {
             $relative = str_replace('\\', '/', $file->getRelativePathname());
-            $files[substr($relative, 0, -4)] = $file->getRealPath() ?: $file->getPathname();
+            $files[] = ['name' => substr($relative, 0, -4), 'path' => $file->getRealPath() ?: $file->getPathname()];
         }
 
         return $files;

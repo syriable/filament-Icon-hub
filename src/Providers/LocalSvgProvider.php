@@ -52,7 +52,7 @@ final class LocalSvgProvider extends IndexedIconProvider
 
     protected function buildIndex(): iterable
     {
-        foreach ($this->scanSvgFiles($this->path) as $name => $absolutePath) {
+        foreach ($this->scanSvgFiles($this->path) as ['name' => $name, 'path' => $absolutePath]) {
             $segments = explode('/', $name);
             $fileName = (string) array_pop($segments);
             [$variant, $baseName] = $this->splitVariant($fileName);

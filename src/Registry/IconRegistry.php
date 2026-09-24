@@ -14,7 +14,9 @@ use Syriable\Filament\Plugins\IconHub\Data\IconQuery;
 use Syriable\Filament\Plugins\IconHub\Data\ProviderMetadata;
 use Syriable\Filament\Plugins\IconHub\Data\SearchPage;
 use Syriable\Filament\Plugins\IconHub\Enums\ProviderStatus;
+use Syriable\Filament\Plugins\IconHub\Enums\SourceKind;
 use Syriable\Filament\Plugins\IconHub\Exceptions\ProviderNotFound;
+use Syriable\Filament\Plugins\IconHub\Providers\BladeIconSetProvider;
 use Syriable\Filament\Plugins\IconHub\Rendering\IconRenderer;
 use Syriable\Filament\Plugins\IconHub\ValueObjects\IconId;
 use Throwable;
@@ -183,15 +185,16 @@ final class IconRegistry
     }
 
     /**
-     * Resolve an icon from its "provider:name" identifier. Never throws:
-     * invalid ids, unknown providers and failing providers return null.
+     * Resolve an icon from a stored value: either a Blade Icons name
+     * ("heroicon-o-user") or a "provider:name" identifier. Never throws:
+     * invalid values, unknown providers and failing providers return null.
      */
     public function find(IconId|string|null $id): ?Icon
     {
         $iconId = $id instanceof IconId ? $id : IconId::tryParse($id);
 
         if ($iconId === null) {
-            return null;
+            return is_string($id) ? $this->findByBladeName($id) : null;
         }
 
         $key = (string) $iconId;
@@ -210,11 +213,85 @@ final class IconRegistry
             return null;
         }
 
-        if (count($this->resolved) >= self::MAX_RESOLVED) {
-            $this->resolved = [];
+        return $this->remember($key, $icon);
+    }
+
+    /**
+     * Resolve a Blade Icons name such as "heroicon-o-user" or
+     * "fas-arrow-left" through the registered Blade Icons set providers.
+     * Longer prefixes win, so sets like "fa" and "fa-brands" never clash.
+     */
+    public function findByBladeName(string $name): ?Icon
+    {
+        $name = trim($name);
+
+        if ($name === '' || str_contains($name, ':')) {
+            return null;
         }
 
-        return $this->resolved[$key] = $icon;
+        $cacheKey = "blade:{$name}";
+
+        if (array_key_exists($cacheKey, $this->resolved)) {
+            return $this->resolved[$cacheKey];
+        }
+
+        $candidates = [];
+
+        foreach ($this->all() as $provider) {
+            if ($provider instanceof BladeIconSetProvider && str_starts_with($name, $provider->prefix().'-')) {
+                $candidates[] = $provider;
+            }
+        }
+
+        usort($candidates, static fn (BladeIconSetProvider $a, BladeIconSetProvider $b): int => strlen($b->prefix()) <=> strlen($a->prefix()));
+
+        foreach ($candidates as $provider) {
+            try {
+                $icon = $provider->status()->isAvailable()
+                    ? $provider->find(substr($name, strlen($provider->prefix()) + 1))
+                    : null;
+            } catch (Throwable $exception) {
+                report($exception);
+
+                continue;
+            }
+
+            if ($icon !== null) {
+                return $this->remember($cacheKey, $icon);
+            }
+        }
+
+        return $this->remember($cacheKey, null);
+    }
+
+    /**
+     * The value to store for an icon. Blade Icons icons are stored by their
+     * Blade Icons name ("heroicon-o-user") so the value works directly with
+     * Filament's ->icon(), @svg() and <x-dynamic-component>; everything else
+     * is stored as "provider:name". Configure with icon-hub.blade_icons.store_as.
+     */
+    public function storedValue(Icon $icon): string
+    {
+        if (
+            config('icon-hub.blade_icons.store_as', 'name') === 'name'
+            && $icon->source->kind === SourceKind::Blade
+            && ($this->all()[$icon->provider] ?? null) instanceof BladeIconSetProvider
+        ) {
+            return $icon->source->value;
+        }
+
+        return $icon->key();
+    }
+
+    /**
+     * Convert any accepted value (legacy "provider:name" or Blade Icons name)
+     * to the configured storage format. Unknown values are returned as-is.
+     */
+    public function normalizeValue(string $value): string
+    {
+        $icon = $this->find($value);
+
+        return $icon === null ? $value : $this->storedValue($icon);
     }
 
     /**
@@ -273,8 +350,24 @@ final class IconRegistry
         }
     }
 
+    private function remember(string $key, ?Icon $icon): ?Icon
+    {
+        if (count($this->resolved) >= self::MAX_RESOLVED) {
+            $this->resolved = [];
+        }
+
+        return $this->resolved[$key] = $icon;
+    }
+
     private function forgetResolved(string $provider): void
     {
+        // Blade-name lookups may point at any set; drop them all.
+        foreach (array_keys($this->resolved) as $key) {
+            if (str_starts_with($key, 'blade:')) {
+                unset($this->resolved[$key]);
+            }
+        }
+
         foreach (array_keys($this->resolved) as $key) {
             if (str_starts_with($key, "{$provider}:")) {
                 unset($this->resolved[$key]);

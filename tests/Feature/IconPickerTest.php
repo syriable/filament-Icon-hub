@@ -67,7 +67,8 @@ describe('IconPicker', function () {
     })->with([
         'unknown icon' => 'alpha:missing',
         'unknown provider' => 'nope:user',
-        'malformed' => 'heroicon-o-user',
+        'malformed' => 'not an icon',
+        'unknown blade name' => 'heroicon-o-does-not-exist',
     ]);
 
     it('rejects icons from providers that are not allowed', function () {

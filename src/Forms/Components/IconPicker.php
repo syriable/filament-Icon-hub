@@ -64,7 +64,7 @@ class IconPicker extends Field
         $this->default(static fn (IconPicker $component): ?array => $component->isMultiple() ? [] : null);
 
         $this->afterStateHydrated(static function (IconPicker $component, mixed $state): void {
-            $component->state($component->normalizeState($state));
+            $component->state($component->normalizeStoredValues($component->normalizeState($state)));
         });
 
         $this->dehydrateStateUsing(static fn (IconPicker $component, mixed $state): string|array|null => $component->normalizeState($state));
@@ -350,20 +350,32 @@ class IconPicker extends Field
         $icons = [];
 
         foreach (array_slice(array_values(array_filter($ids, is_string(...))), 0, 100) as $id) {
-            $iconId = IconId::tryParse($id);
+            $icon = $this->registry()->find($id);
 
-            if ($iconId === null || ! in_array($iconId->provider, $allowed, true)) {
-                continue;
-            }
-
-            $icon = $this->registry()->find($iconId);
-
-            if ($icon !== null) {
+            if ($icon !== null && in_array($icon->provider, $allowed, true)) {
                 $icons[$id] = $this->iconForJs($icon);
             }
         }
 
         return $icons;
+    }
+
+    /**
+     * Convert stored values to the configured format, e.g. a legacy
+     * "heroicons:o-user" becomes "heroicon-o-user".
+     *
+     * @param  string|list<string>|null  $state
+     * @return string|list<string>|null
+     */
+    public function normalizeStoredValues(string|array|null $state): string|array|null
+    {
+        if (is_string($state)) {
+            return $this->registry()->normalizeValue($state);
+        }
+
+        return is_array($state)
+            ? array_values(array_unique(array_map(fn (string $value): string => $this->registry()->normalizeValue($value), $state)))
+            : null;
     }
 
     /**
@@ -390,7 +402,7 @@ class IconPicker extends Field
     protected function iconForJs(Icon $icon): array
     {
         return [
-            'id' => $icon->key(),
+            'id' => $this->registry()->storedValue($icon),
             'label' => $icon->label,
             'provider' => $icon->provider,
             'html' => app(IconRenderer::class)->render($icon, $this->getExtraIconAttributes())->toHtml(),
