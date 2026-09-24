@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Syriable\Filament\Plugins\IconHub\Visibility;
 
-use Illuminate\Database\Eloquent\Model;
 use Syriable\Filament\Plugins\IconHub\Contracts\IconVisibility;
+use Syriable\Filament\Plugins\IconHub\Models\HiddenIcon;
 use Throwable;
 
 /**
@@ -19,7 +19,7 @@ final class DefaultIconVisibility implements IconVisibility
 
     /**
      * @param  list<string>  $configured
-     * @param  class-string<Model>|null  $model
+     * @param  class-string<HiddenIcon>|null  $model
      */
     public function __construct(
         private readonly array $configured = [],

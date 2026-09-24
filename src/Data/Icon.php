@@ -77,8 +77,8 @@ final readonly class Icon
             source: IconSource::fromArray($data['source']),
             category: $data['category'] ?? null,
             variant: $data['variant'] ?? null,
-            tags: $data['tags'] ?? [],
-            metadata: $data['metadata'] ?? [],
+            tags: $data['tags'],
+            metadata: $data['metadata'],
         );
     }
 }

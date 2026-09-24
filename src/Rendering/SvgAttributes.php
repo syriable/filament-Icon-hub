@@ -140,22 +140,16 @@ final class SvgAttributes
             '/([^\s=\/>"\']+)(?:\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s>"\']+)))?/',
             $attributeString,
             $matches,
-            PREG_SET_ORDER,
+            PREG_SET_ORDER | PREG_UNMATCHED_AS_NULL,
         );
 
         $attributes = [];
 
         foreach ($matches as $match) {
-            $name = $match[1];
+            $name = (string) $match[1];
+            $value = $match[2] ?? $match[3] ?? $match[4] ?? null;
 
-            if (! isset($match[2])) {
-                $attributes[$name] = true;
-
-                continue;
-            }
-
-            $value = ($match[2] ?? '') !== '' ? $match[2] : (($match[3] ?? '') !== '' ? $match[3] : ($match[4] ?? ''));
-            $attributes[$name] = html_entity_decode($value, ENT_QUOTES | ENT_HTML5);
+            $attributes[$name] = $value === null ? true : html_entity_decode($value, ENT_QUOTES | ENT_HTML5);
         }
 
         return $attributes;

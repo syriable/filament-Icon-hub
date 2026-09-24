@@ -74,7 +74,7 @@ final readonly class LibraryIconProvider implements IconProvider
 
             $builder->where(static function (Builder $builder) use ($like): void {
                 foreach (['name', 'label', 'collection', 'tags'] as $column) {
-                    $builder->orWhereRaw("LOWER({$builder->getQuery()->getGrammar()->wrap($column)}) LIKE ?", [$like]);
+                    $builder->orWhereLike($column, $like);
                 }
             });
         }
@@ -82,7 +82,7 @@ final readonly class LibraryIconProvider implements IconProvider
         $models = $builder->offset($query->offset())->limit($query->perPage + 1)->get();
 
         return new IconResults(
-            icons: $models->take($query->perPage)->map(fn (ManagedIcon $icon): Icon => $this->toIcon($icon))->values()->all(),
+            icons: array_values($models->take($query->perPage)->map(fn (ManagedIcon $icon): Icon => $this->toIcon($icon))->all()),
             hasMore: $models->count() > $query->perPage,
         );
     }

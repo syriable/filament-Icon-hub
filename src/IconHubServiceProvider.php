@@ -41,21 +41,20 @@ final class IconHubServiceProvider extends PackageServiceProvider
     public function packageRegistered(): void
     {
         $this->app->singleton(IconCache::class, static function (Application $app): IconCache {
-            $config = $app['config'];
-            $ttl = (array) $config->get('icon-hub.cache.ttl', []);
-            $store = $config->get('icon-hub.cache.store');
+            $ttl = (array) config('icon-hub.cache.ttl', []);
+            $store = config('icon-hub.cache.store');
 
             return new IconCache(
                 cache: $app->make(CacheFactory::class),
-                enabled: (bool) $config->get('icon-hub.cache.enabled', true),
+                enabled: (bool) config('icon-hub.cache.enabled', true),
                 store: is_string($store) ? $store : null,
-                prefix: (string) $config->get('icon-hub.cache.prefix', 'icon-hub'),
+                prefix: (string) config('icon-hub.cache.prefix', 'icon-hub'),
                 ttl: array_map(static fn (mixed $seconds): ?int => $seconds === null ? null : (int) $seconds, $ttl),
             );
         });
 
         $this->app->singleton(SvgSanitizer::class, static fn (Application $app): SvgSanitizer => new SvgSanitizer(
-            maxBytes: (int) $app['config']->get('icon-hub.security.max_svg_bytes', 262_144),
+            maxBytes: (int) config('icon-hub.security.max_svg_bytes', 262_144),
         ));
 
         $this->app->singleton(IconRenderer::class, static fn (Application $app): IconRenderer => new IconRenderer(
@@ -64,25 +63,24 @@ final class IconHubServiceProvider extends PackageServiceProvider
             bladeIcons: $app->make(BladeIconFactory::class),
             allowedUrlSchemes: array_values(array_map(
                 strtolower(...),
-                array_filter((array) $app['config']->get('icon-hub.security.allowed_url_schemes', ['https']), is_string(...)),
+                array_filter((array) config('icon-hub.security.allowed_url_schemes', ['https']), is_string(...)),
             )),
         ));
 
         // Scoped: hidden icons are re-read per request in long-running workers.
-        $this->app->scoped(IconVisibility::class, static function (Application $app): IconVisibility {
-            $config = $app['config'];
-
+        $this->app->scoped(IconVisibility::class, static function (): IconVisibility {
             /** @var class-string<HiddenIcon> $model */
-            $model = $config->get('icon-hub.library.models.hidden_icon', HiddenIcon::class);
+            $model = config('icon-hub.library.models.hidden_icon', HiddenIcon::class);
 
             return new DefaultIconVisibility(
-                configured: array_values(array_filter((array) $config->get('icon-hub.hidden', []), is_string(...))),
-                model: $config->get('icon-hub.library.enabled', false) ? $model : null,
+                configured: array_values(array_filter((array) config('icon-hub.hidden', []), is_string(...))),
+                model: config('icon-hub.library.enabled', false) ? $model : null,
             );
         });
 
-        $this->app->singleton(IconRegistry::class, static fn (Application $app): IconRegistry => (new IconRegistry($app))
-            ->discoverUsing(static fn (): iterable => $app->make(ConfigProviderDiscovery::class)()));
+        // The registry resolves the container lazily (Octane safe) instead of holding it.
+        $this->app->singleton(IconRegistry::class, static fn (): IconRegistry => (new IconRegistry)
+            ->discoverUsing(static fn (): iterable => app(ConfigProviderDiscovery::class)()));
     }
 
     public function packageBooted(): void

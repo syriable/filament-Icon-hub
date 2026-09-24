@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Syriable\Filament\Plugins\IconHub\Registry;
 
 use Closure;
-use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 use InvalidArgumentException;
@@ -47,10 +46,6 @@ final class IconRegistry
     /** @var array<string, Icon|null> */
     private array $resolved = [];
 
-    public function __construct(
-        private readonly Container $container,
-    ) {}
-
     /**
      * Register a provider instance or a container-resolvable provider class.
      * A provider registered with an existing id replaces the previous one.
@@ -60,7 +55,7 @@ final class IconRegistry
     public function register(IconProvider|string $provider): self
     {
         if (is_string($provider)) {
-            $provider = $this->container->make($provider);
+            $provider = app($provider);
         }
 
         if (! $provider instanceof IconProvider) {
@@ -231,7 +226,7 @@ final class IconRegistry
     {
         $query = is_string($query) ? new IconQuery($query) : $query;
 
-        return $this->container->make(IconSearcher::class)->search(
+        return app(IconSearcher::class)->search(
             query: $query,
             providers: array_keys($this->providers($providers)),
             cursor: $cursor,
@@ -250,7 +245,7 @@ final class IconRegistry
 
         return $icon === null
             ? new HtmlString('')
-            : $this->container->make(IconRenderer::class)->render($icon, $attributes);
+            : app(IconRenderer::class)->render($icon, $attributes);
     }
 
     private function discover(): void

@@ -339,7 +339,7 @@ class IconPicker extends Field
      * Called from the browser when the state changed on the server (for
      * example through $set()) and previews for new ids are needed.
      *
-     * @param  list<string>  $ids
+     * @param  array<mixed>  $ids  untrusted input from the browser
      * @return array<string, array{id: string, label: string, provider: string, html: string}>
      */
     #[ExposedLivewireMethod]

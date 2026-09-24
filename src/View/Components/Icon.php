@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Syriable\Filament\Plugins\IconHub\View\Components;
 
 use Closure;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\View\Component;
 use Syriable\Filament\Plugins\IconHub\Registry\IconRegistry;
 
@@ -24,9 +23,7 @@ final class Icon extends Component
             /** @var \Illuminate\View\ComponentAttributeBag $attributes */
             $attributes = $data['attributes'];
 
-            $html = app(IconRegistry::class)->html($this->icon, $attributes->getAttributes());
-
-            return $html instanceof Htmlable ? $html->toHtml() : '';
+            return app(IconRegistry::class)->html($this->icon, $attributes->getAttributes())->toHtml();
         };
     }
 }

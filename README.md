@@ -48,8 +48,8 @@ IconPicker (field) ──▶ IconRegistry ──▶ IconProvider
 |---|---|
 | PHP | 8.4+ |
 | Laravel | 13+ |
-| Filament | 5+ |
-| Livewire | 4+ |
+| Filament | 5.8.4+ |
+| Livewire | 4.4+ |
 
 ## Installation
 
