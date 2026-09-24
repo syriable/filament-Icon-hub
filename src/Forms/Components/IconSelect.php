@@ -161,20 +161,19 @@ class IconSelect extends Select
             $providers,
         );
 
-        $grouped = $this->isGroupedByProvider();
-        $options = [];
+        /** @var array<string, array<string, string>> $grouped */
+        $grouped = [];
+        /** @var array<string, string> $flat */
+        $flat = [];
 
         foreach ($page->icons as $icon) {
             $label = $this->renderOptionLabel($icon);
 
-            if ($grouped) {
-                $options[$this->providerLabel($icon->provider)][$icon->key()] = $label;
-            } else {
-                $options[$icon->key()] = $label;
-            }
+            $grouped[$this->providerLabel($icon->provider)][$icon->key()] = $label;
+            $flat[$icon->key()] = $label;
         }
 
-        return $options;
+        return $this->isGroupedByProvider() ? $grouped : $flat;
     }
 
     public function getIconOptionLabel(mixed $value): ?string
