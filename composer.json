@@ -1,0 +1,83 @@
+{
+    "name": "syriable/filament-icon-hub",
+    "description": "A lightweight, extensible icon picker and icon provider system for Filament.",
+    "keywords": [
+        "laravel",
+        "filament",
+        "filament-plugin",
+        "icon-picker",
+        "blade-icons",
+        "icons"
+    ],
+    "homepage": "https://github.com/syriable/filament-icon-hub",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Syriable",
+            "email": "alkhatib.syr@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "blade-ui-kit/blade-icons": "^1.8",
+        "enshrined/svg-sanitize": "^1.0",
+        "filament/filament": "^5.0",
+        "illuminate/contracts": "^13.0",
+        "spatie/laravel-package-tools": "^1.92"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.20",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-arch": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "pestphp/pest-plugin-livewire": "^4.0",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan-deprecation-rules": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Syriable\\Filament\\Plugins\\IconHub\\": "src/",
+            "Syriable\\Filament\\Plugins\\IconHub\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Syriable\\Filament\\Plugins\\IconHub\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/"
+        }
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan analyse --memory-limit=1G",
+        "test": "vendor/bin/pest",
+        "format": "vendor/bin/pint",
+        "serve": [
+            "@php vendor/bin/testbench workbench:build --ansi",
+            "@php vendor/bin/testbench serve --ansi"
+        ],
+        "post-autoload-dump": [
+            "@php vendor/bin/testbench package:discover --ansi"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Syriable\\Filament\\Plugins\\IconHub\\IconHubServiceProvider"
+            ],
+            "aliases": {
+                "IconHub": "Syriable\\Filament\\Plugins\\IconHub\\Facades\\IconHub"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
