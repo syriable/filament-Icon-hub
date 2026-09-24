@@ -118,7 +118,7 @@ final class IconRenderer
             },
         );
 
-        return is_string($svg) && $svg !== '' ? $svg : null;
+        return $svg !== '' ? $svg : null;
     }
 
     /**
