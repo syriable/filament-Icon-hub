@@ -54,7 +54,7 @@ final class DefaultIconVisibility implements IconVisibility
 
         if ($this->model !== null) {
             try {
-                $ids = [...$ids, ...$this->model::query()->pluck('icon')->filter(static fn (mixed $value): bool => is_string($value))->all()];
+                $ids = [...$ids, ...$this->model::query()->pluck('icon')->all()];
             } catch (Throwable $exception) {
                 // A missing table (migrations not run yet) must not break the picker.
                 report($exception);
