@@ -456,3 +456,42 @@
 .fi-icon-hub-display-label {
     font-size: 0.875rem;
 }
+
+/* IconSelect options -------------------------------------------------------- */
+
+.fi-icon-hub-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-inline-size: 0;
+}
+
+.fi-icon-hub-option-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+}
+
+.fi-icon-hub-option-icon > svg,
+.fi-icon-hub-option-icon > img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+}
+
+.fi-icon-hub-option-label {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.fi-icon-hub-option-meta {
+    flex-shrink: 0;
+    color: var(--gray-500);
+    font-size: 0.75rem;
+}
+
+.dark .fi-icon-hub-option-meta {
+    color: var(--gray-400);
+}

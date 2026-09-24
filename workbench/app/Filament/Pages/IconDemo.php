@@ -10,6 +10,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Syriable\Filament\Plugins\IconHub\Forms\Components\IconPicker;
+use Syriable\Filament\Plugins\IconHub\Forms\Components\IconSelect;
 
 /**
  * Demo page used to exercise the picker in a browser during development.
@@ -25,7 +26,7 @@ final class IconDemo extends Page
 
     public function mount(): void
     {
-        $this->form->fill(['icon' => 'heroicons:o-home']);
+        $this->form->fill(['icon' => 'heroicons:o-home', 'select_icon' => 'heroicons:o-star']);
     }
 
     public function content(Schema $schema): Schema
@@ -51,6 +52,13 @@ final class IconDemo extends Page
                         ->multiple()
                         ->providers(['heroicons', 'brand'])
                         ->extraIconAttributes(['data-demo' => 'yes']),
+                    IconSelect::make('select_icon')
+                        ->label('Icon (select)')
+                        ->helperText('The same icons as a native searchable Select.'),
+                    IconSelect::make('select_icons')
+                        ->label('Icons (multiple select)')
+                        ->multiple()
+                        ->providers(['heroicons', 'brand']),
                     IconPicker::make('disabled_icon')
                         ->label('Disabled')
                         ->default('heroicons:o-lock-closed')

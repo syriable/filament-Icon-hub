@@ -278,6 +278,17 @@ Which provider caches what:
 
 ## 6. Filament integration strategy
 
+Two form fields share the registry, the identifiers, and the `ValidIcon`
+rule:
+
+- **`IconPicker`**: a custom field with a modal grid. Described below.
+- **`IconSelect`**: extends Filament's `Select` (`searchable`, `allowHtml`,
+  `dynamicOptions`). The first page of icons comes from an overridden
+  `getOptionsForJs()` when the dropdown opens, search goes through
+  `getSearchResultsUsing()`, and labels come from `getOptionLabel(s)Using()`.
+  Option labels are HTML built from the sanitized renderer output plus an
+  escaped label, so `allowHtml` adds no XSS surface.
+
 `IconPicker extends Filament\Forms\Components\Field` and uses a Blade view.
 State, validation, `required()`, `disabled()`, `hidden()`, `live()`,
 `helperText()`, `hint()`, and affixes all come from Filament natively.
