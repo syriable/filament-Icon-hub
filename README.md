@@ -107,6 +107,41 @@ Multiple selection stores an array, so cast the attribute to `array`:
 IconPicker::make('icons')->multiple();
 ```
 
+### Select input (compact alternative)
+
+`IconSelect` is Filament's native searchable `Select` with an icon next to
+every option. Use it when a grid modal is more than you need, for example in
+dense forms, filters, or table actions.
+
+```php
+use Syriable\Filament\Plugins\IconHub\Forms\Components\IconSelect;
+
+IconSelect::make('icon');
+
+IconSelect::make('icons')
+    ->multiple()
+    ->providers(['heroicons', 'brand'])
+    ->optionsLimit(30)            // icons per request (default 50)
+    ->groupByProvider(false)      // default: grouped when several providers are offered
+    ->extraIconAttributes(['class' => 'text-primary-600']);
+```
+
+- It stores the same `provider:name` identifiers as `IconPicker` and uses the
+  same registry, validation, and hidden-icon rules, so the two fields are
+  interchangeable.
+- Icons load when the dropdown opens and as you type. Nothing is fetched when
+  the form renders, apart from the label of the selected icon.
+- Variants that share a name are labeled, for example *Star · Outline* and
+  *Star · Solid*.
+- Every `Select` option still works: `required()`, `multiple()`,
+  `placeholder()`, `searchDebounce()`, `live()`, and so on.
+
+| | `IconPicker` | `IconSelect` |
+|---|---|---|
+| UI | Modal with an icon grid | Dropdown list |
+| Browsing | Infinite scroll, provider, style, and category filters | Search, first `optionsLimit` results |
+| Best for | Visually choosing from large sets | Compact forms, when users know what they want |
+
 ### Table column and infolist entry
 
 ```php
