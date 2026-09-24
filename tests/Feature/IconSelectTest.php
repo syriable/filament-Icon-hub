@@ -110,4 +110,22 @@ describe('IconSelect', function () {
             ->toContain('fi-icon-hub-option-meta">Outline</span>')
             ->and(IconSelect::make('icon')->getIconOptionLabel('nope:x'))->toBeNull();
     });
+
+    it('shows options as an icon grid by default', function () {
+        selectForm(fn (IconSelect $select) => $select->providers(['alpha']))
+            ->assertSee('fi-icon-hub-select-grid', false);
+
+        expect(IconSelect::make('icon')->isGrid())->toBeTrue();
+    });
+
+    it('can switch back to a list', function () {
+        selectForm(fn (IconSelect $select) => $select->providers(['alpha'])->grid(false))
+            ->assertSee('fi-icon-hub-select', false)
+            ->assertDontSee('fi-icon-hub-select-grid', false);
+    });
+
+    it('keeps names available as tooltips in the grid', function () {
+        expect(IconSelect::make('icon')->getIconOptionLabel('heroicons:s-user'))
+            ->toContain('title="User (Solid)"');
+    });
 });

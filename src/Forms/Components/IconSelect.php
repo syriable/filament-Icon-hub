@@ -32,6 +32,8 @@ class IconSelect extends Select
 
     protected bool|Closure $isGroupedByProvider = true;
 
+    protected bool|Closure $isGrid = true;
+
     /** @var list<array<array-key, mixed>|Closure> */
     protected array $extraIconAttributes = [];
 
@@ -62,6 +64,27 @@ class IconSelect extends Select
         });
 
         $this->rule(static fn (IconSelect $component): ValidIcon => new ValidIcon($component->getProviderIds()));
+
+        $this->extraAttributes(static fn (IconSelect $component): array => [
+            'class' => $component->isGrid() ? 'fi-icon-hub-select fi-icon-hub-select-grid' : 'fi-icon-hub-select',
+        ], merge: true);
+    }
+
+    /**
+     * Show the dropdown options as a grid of icon tiles (default) instead of
+     * a list. Names stay available as tooltips and to screen readers, and
+     * the selected value always shows the icon with its name.
+     */
+    public function grid(bool|Closure $condition = true): static
+    {
+        $this->isGrid = $condition;
+
+        return $this;
+    }
+
+    public function isGrid(): bool
+    {
+        return (bool) $this->evaluate($this->isGrid);
     }
 
     /**
@@ -195,11 +218,13 @@ class IconSelect extends Select
         $svg = app(IconRenderer::class)->render($icon, $this->getExtraIconAttributes())->toHtml();
 
         // Variants share labels ("Star" outline / solid / mini), so name them.
-        $variant = $icon->variant !== null
-            ? '<span class="fi-icon-hub-option-meta">'.e(Str::headline($icon->variant)).'</span>'
+        $variantLabel = $icon->variant !== null ? Str::headline($icon->variant) : null;
+        $variant = $variantLabel !== null
+            ? ' <span class="fi-icon-hub-option-meta">'.e($variantLabel).'</span>'
             : '';
+        $title = $variantLabel !== null ? "{$icon->label} ({$variantLabel})" : $icon->label;
 
-        return '<span class="fi-icon-hub-option">'
+        return '<span class="fi-icon-hub-option" title="'.e($title).'">'
             .'<span class="fi-icon-hub-option-icon">'.$svg.'</span>'
             .'<span class="fi-icon-hub-option-label">'.e($icon->label).'</span>'
             .$variant
