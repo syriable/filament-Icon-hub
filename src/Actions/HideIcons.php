@@ -7,6 +7,7 @@ namespace Syriable\Filament\Plugins\IconHub\Actions;
 use Illuminate\Support\Facades\Date;
 use Syriable\Filament\Plugins\IconHub\Contracts\IconVisibility;
 use Syriable\Filament\Plugins\IconHub\Models\HiddenIcon;
+use Syriable\Filament\Plugins\IconHub\Registry\IconRegistry;
 use Syriable\Filament\Plugins\IconHub\ValueObjects\IconId;
 
 /**
@@ -16,6 +17,7 @@ final readonly class HideIcons
 {
     public function __construct(
         private IconVisibility $visibility,
+        private IconRegistry $registry,
     ) {}
 
     /**
@@ -28,10 +30,12 @@ final readonly class HideIcons
         $rows = [];
 
         foreach ($ids as $id) {
-            $iconId = IconId::tryParse($id);
+            // Hidden icons are always stored as "provider:name", whatever format
+            // the picker used, so one list covers every stored representation.
+            $key = $this->registry->find($id)?->key() ?? (string) IconId::tryParse($id);
 
-            if ($iconId !== null) {
-                $rows[(string) $iconId] = ['icon' => (string) $iconId, 'created_at' => $now, 'updated_at' => $now];
+            if ($key !== '') {
+                $rows[$key] = ['icon' => $key, 'created_at' => $now, 'updated_at' => $now];
             }
         }
 

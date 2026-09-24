@@ -84,18 +84,40 @@ IconPicker::make('icon')
     ->required();
 ```
 
-The stored value is a namespaced identifier, `{provider}:{name}`:
+#### What gets stored
+
+Icons from Blade Icons sets are stored by their **Blade Icons name**, so the
+value works directly anywhere Blade Icons or Filament accepts an icon:
 
 ```
-heroicons:o-user
+heroicon-o-arrow-down-tray      Heroicons
+fas-house                       Font Awesome (solid)
+lucide-user                     Lucide
+```
+
+```php
+NavigationItem::make('Reports')->icon($category->icon); // Filament
+```
+
+```blade
+@svg($category->icon, 'h-5 w-5')
+```
+
+Icons that have no Blade Icons name are stored as a namespaced
+`{provider}:{name}` identifier: local SVG directories, the uploaded library,
+and remote or custom providers.
+
+```
 brand:social/github
 library:company-logo
 flaticon:512873
 ```
 
-The same name can exist in many providers (`heroicons:o-user` and
-`lucide:user`), so the provider is always part of the value. A `string`
-column of 255 characters is enough.
+Both formats are always accepted when reading values. Older values such as
+`heroicons:o-user` still render and validate, and a form converts them to
+`heroicon-o-user` when it loads. To store namespaced ids for Blade Icons too,
+set `blade_icons.store_as` to `id`. A `string` column of 255 characters is
+enough for either format.
 
 `IconPicker` behaves like any Filament field: `required()`, `disabled()`,
 `hidden()`, `live()`, `helperText()`, `hint()`, `default()`, `afterStateUpdated()`,
@@ -715,6 +737,7 @@ may upload and hide icons.
 | Key | Default | Description |
 |---|---|---|
 | `blade_icons.enabled` | `true` | Discover Blade Icons sets |
+| `blade_icons.store_as` | `name` | Store Blade Icons as their Blade Icons name (`heroicon-o-user`) or as `id` (`heroicons:o-user`) |
 | `blade_icons.sets` | `null` | Allow-list of set names (`null` = all) |
 | `blade_icons.except` | `[]` | Set names to exclude |
 | `blade_icons.labels` | `[]` | Display labels per set |

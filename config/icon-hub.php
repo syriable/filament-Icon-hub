@@ -20,6 +20,14 @@ return [
     'blade_icons' => [
         'enabled' => true,
 
+        // How picked Blade Icons are stored:
+        //   'name' - the Blade Icons name, e.g. "heroicon-o-arrow-down-tray".
+        //            Works directly with Filament's ->icon(), @svg() and
+        //            <x-dynamic-component>. (default)
+        //   'id'   - the namespaced id, e.g. "heroicons:o-arrow-down-tray".
+        // Both formats are always accepted when reading stored values.
+        'store_as' => 'name',
+
         'sets' => null,
 
         'except' => [],

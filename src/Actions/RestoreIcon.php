@@ -6,6 +6,7 @@ namespace Syriable\Filament\Plugins\IconHub\Actions;
 
 use Syriable\Filament\Plugins\IconHub\Contracts\IconVisibility;
 use Syriable\Filament\Plugins\IconHub\Models\HiddenIcon;
+use Syriable\Filament\Plugins\IconHub\Registry\IconRegistry;
 
 /**
  * Make a previously hidden icon available in the picker again.
@@ -20,7 +21,9 @@ final readonly class RestoreIcon
     {
         /** @var class-string<HiddenIcon> $model */
         $model = config('icon-hub.library.models.hidden_icon', HiddenIcon::class);
-        $deleted = $model::query()->where('icon', $id)->delete() > 0;
+        // Hidden rows use "provider:name"; accept Blade Icons names too.
+        $key = app(IconRegistry::class)->find($id)?->key() ?? $id;
+        $deleted = $model::query()->where('icon', $key)->delete() > 0;
 
         $this->visibility->refresh();
 

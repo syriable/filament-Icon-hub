@@ -7,11 +7,10 @@ namespace Syriable\Filament\Plugins\IconHub\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Syriable\Filament\Plugins\IconHub\Registry\IconRegistry;
-use Syriable\Filament\Plugins\IconHub\ValueObjects\IconId;
 
 /**
- * Validates an icon identifier (or a list of them): correct format, allowed
- * provider and an icon that actually exists.
+ * Validates a stored icon value (or a list of them): a Blade Icons name or a
+ * "provider:name" identifier, from an allowed provider, that actually exists.
  */
 final readonly class ValidIcon implements ValidationRule
 {
@@ -39,16 +38,13 @@ final readonly class ValidIcon implements ValidationRule
 
     private function passes(mixed $value): bool
     {
-        $id = IconId::tryParse($value);
-
-        if ($id === null) {
+        if (! is_string($value)) {
             return false;
         }
 
-        if ($this->providers !== null && ! in_array($id->provider, $this->providers, true)) {
-            return false;
-        }
+        // Accepts Blade Icons names ("heroicon-o-user") and "provider:name".
+        $icon = app(IconRegistry::class)->find($value);
 
-        return app(IconRegistry::class)->find($id) !== null;
+        return $icon !== null && ($this->providers === null || in_array($icon->provider, $this->providers, true));
     }
 }

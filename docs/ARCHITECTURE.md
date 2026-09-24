@@ -481,3 +481,36 @@ implement it."
 
 **Impact:** Any requested design change will be handled as a follow-up
 change with its own ADR.
+
+### ADR-007: Store Blade Icons by their Blade Icons name
+
+**Decision:** Icons from Blade Icons sets are stored as their Blade Icons
+name (`heroicon-o-arrow-down-tray`). Every other source keeps
+`provider:name`. The registry resolves both formats.
+
+**Context:** Stored values were `heroicons:o-arrow-down-tray`, which cannot be
+passed to Filament's `->icon()` or `@svg()`. Users expect the value to be
+usable directly.
+
+**Alternatives considered:**
+- **Option A, keep `provider:name` everywhere (ADR-002):** consistent, but
+  forces a lookup through Icon Hub everywhere an icon is used.
+- **Option B, store Blade Icons names for Blade sets and `provider:name`
+  otherwise:** chosen.
+
+**Reason:** Blade Icons prefixes are already unique (Blade Icons enforces
+this), so the Blade Icons name is itself an unambiguous identifier. Where
+prefixes overlap (`fa` and `fa-brands`), the longest match is tried first.
+
+**Trade-offs:** Two value formats exist. `IconRegistry::find()` accepts
+both, `storedValue()` produces the configured one, and `normalizeValue()`
+converts between them. Hidden icons are still keyed by `provider:name`.
+
+**Impact:** Supersedes ADR-002 for Blade Icons sets. Stored-value format
+change: new values differ, but old values keep working and are converted
+when forms load. `blade_icons.store_as = 'id'` restores the previous
+behavior. SemVer: MAJOR once 1.0 is released; no release has shipped yet.
+Verified against Heroicons, Font Awesome (solid/regular/brands), Lucide,
+Lucide Lab, Tabler, Phosphor, Bootstrap Icons, and Filament's own set:
+25,109 icons, all resolving by their stored value.
+

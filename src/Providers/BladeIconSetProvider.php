@@ -112,8 +112,8 @@ final class BladeIconSetProvider extends IndexedIconProvider
                 continue;
             }
 
-            foreach (array_keys($this->scanSvgFiles($path)) as $relative) {
-                $names[] = str_replace('/', '.', $relative);
+            foreach ($this->scanSvgFiles($path) as $file) {
+                $names[] = str_replace('/', '.', $file['name']);
             }
         }
 
