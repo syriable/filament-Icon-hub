@@ -109,9 +109,10 @@ IconPicker::make('icons')->multiple();
 
 ### Select input (compact alternative)
 
-`IconSelect` is Filament's native searchable `Select` with an icon next to
-every option. Use it when a grid modal is more than you need, for example in
-dense forms, filters, or table actions.
+`IconSelect` is Filament's native searchable `Select` whose dropdown shows the
+icons as a grid of tiles. The selected icon is shown with its name in the
+field. Use it when a modal is more than you need, for example in dense forms,
+filters, or table actions.
 
 ```php
 use Syriable\Filament\Plugins\IconHub\Forms\Components\IconSelect;
@@ -123,6 +124,7 @@ IconSelect::make('icons')
     ->providers(['heroicons', 'brand'])
     ->optionsLimit(30)            // icons per request (default 50)
     ->groupByProvider(false)      // default: grouped when several providers are offered
+    ->grid(false)                 // list of "icon + name" rows instead of the tile grid
     ->extraIconAttributes(['class' => 'text-primary-600']);
 ```
 
@@ -131,14 +133,16 @@ IconSelect::make('icons')
   interchangeable.
 - Icons load when the dropdown opens and as you type. Nothing is fetched when
   the form renders, apart from the label of the selected icon.
-- Variants that share a name are labeled, for example *Star · Outline* and
-  *Star · Solid*.
+- In the grid, names appear as tooltips and remain available to screen
+  readers. Variants that share a name are labeled, for example *Star
+  (Outline)* and *Star (Solid)*. With `grid(false)` the dropdown is a list
+  of rows with icon, name, and variant.
 - Every `Select` option still works: `required()`, `multiple()`,
   `placeholder()`, `searchDebounce()`, `live()`, and so on.
 
 | | `IconPicker` | `IconSelect` |
 |---|---|---|
-| UI | Modal with an icon grid | Dropdown list |
+| UI | Modal with an icon grid | Dropdown with an icon grid (or a list) |
 | Browsing | Infinite scroll, provider, style, and category filters | Search, first `optionsLimit` results |
 | Best for | Visually choosing from large sets | Compact forms, when users know what they want |
 
