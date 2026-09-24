@@ -1,0 +1,1 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" onload="alert(1)"><script>alert(document.cookie)</script><a href="javascript:alert(1)"><rect width="10" height="10"/></a><foreignObject><div>x</div></foreignObject></svg>

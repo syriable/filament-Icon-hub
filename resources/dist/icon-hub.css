@@ -1,0 +1,458 @@
+/*
+ * Filament Icon Hub
+ * Plain CSS built on Filament's color variables. Logical properties keep it
+ * RTL-safe; `.dark` selectors follow Filament's dark mode.
+ */
+
+.fi-icon-hub-picker {
+    --icon-hub-item-size: 4.5rem;
+    --icon-hub-icon-size: 1.5rem;
+    display: grid;
+    gap: 0.5rem;
+}
+
+/* Trigger ----------------------------------------------------------------- */
+
+.fi-icon-hub-control {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+}
+
+.fi-icon-hub-trigger {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    min-block-size: 2.5rem;
+    min-inline-size: 0;
+    padding-inline: 0.75rem;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    color: var(--gray-950);
+    font-size: 0.875rem;
+    text-align: start;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    outline: 1px solid color-mix(in oklab, var(--gray-950) 10%, transparent);
+    outline-offset: -1px;
+    transition: outline-color 75ms;
+}
+
+.fi-icon-hub-trigger:focus-visible {
+    outline: 2px solid var(--primary-600);
+}
+
+.fi-icon-hub-trigger:not(:disabled):hover {
+    outline-color: color-mix(in oklab, var(--gray-950) 20%, transparent);
+}
+
+.fi-icon-hub-trigger:disabled {
+    cursor: not-allowed;
+    background-color: var(--gray-50);
+    color: var(--gray-500);
+}
+
+.dark .fi-icon-hub-trigger {
+    background-color: color-mix(in oklab, #fff 5%, transparent);
+    color: #fff;
+    outline-color: color-mix(in oklab, #fff 20%, transparent);
+}
+
+.dark .fi-icon-hub-trigger:disabled {
+    background-color: transparent;
+    color: var(--gray-400);
+}
+
+.fi-icon-hub-trigger-content,
+.fi-icon-hub-trigger-selected,
+.fi-icon-hub-trigger-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-inline-size: 0;
+}
+
+.fi-icon-hub-trigger-placeholder {
+    color: var(--gray-500);
+}
+
+.dark .fi-icon-hub-trigger-placeholder {
+    color: var(--gray-400);
+}
+
+.fi-icon-hub-trigger-label,
+.fi-icon-hub-chip-label {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.fi-icon-hub-preview {
+    display: inline-flex;
+    flex-shrink: 0;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+}
+
+.fi-icon-hub-preview > svg,
+.fi-icon-hub-preview > img,
+.fi-icon-hub-item-icon > svg,
+.fi-icon-hub-item-icon > img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+}
+
+.fi-icon-hub-clear,
+.fi-icon-hub-chip-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    color: var(--gray-400);
+}
+
+.fi-icon-hub-clear {
+    inline-size: 2.5rem;
+    flex-shrink: 0;
+}
+
+.fi-icon-hub-clear:hover,
+.fi-icon-hub-chip-remove:hover {
+    color: var(--gray-600);
+}
+
+.fi-icon-hub-clear:focus-visible,
+.fi-icon-hub-chip-remove:focus-visible {
+    outline: 2px solid var(--primary-600);
+}
+
+.dark .fi-icon-hub-clear:hover,
+.dark .fi-icon-hub-chip-remove:hover {
+    color: var(--gray-200);
+}
+
+/* Multiple selection chips ------------------------------------------------ */
+
+.fi-icon-hub-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fi-icon-hub-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    max-inline-size: 100%;
+    padding-block: 0.25rem;
+    padding-inline: 0.5rem 0.25rem;
+    border-radius: 0.375rem;
+    background-color: var(--gray-100);
+    color: var(--gray-700);
+    font-size: 0.75rem;
+}
+
+.dark .fi-icon-hub-chip {
+    background-color: color-mix(in oklab, #fff 10%, transparent);
+    color: var(--gray-200);
+}
+
+.fi-icon-hub-chip .fi-icon-hub-preview {
+    inline-size: 1rem;
+    block-size: 1rem;
+}
+
+/* Modal body -------------------------------------------------------------- */
+
+.fi-icon-hub-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-block-size: 0;
+}
+
+.fi-icon-hub-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.fi-icon-hub-search {
+    position: relative;
+    flex: 1 1 16rem;
+}
+
+.fi-icon-hub-search input[type='search']::-webkit-search-cancel-button {
+    cursor: pointer;
+}
+
+.fi-icon-hub-search-loading {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+.fi-icon-hub-filters {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.fi-icon-hub-filter {
+    flex: 1 1 9rem;
+    min-inline-size: 0;
+}
+
+.fi-icon-hub-errors {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    background-color: var(--warning-50);
+    color: var(--warning-700);
+    font-size: 0.8125rem;
+    list-style: none;
+}
+
+.dark .fi-icon-hub-errors {
+    background-color: color-mix(in oklab, var(--warning-400) 10%, transparent);
+    color: var(--warning-300);
+}
+
+.fi-icon-hub-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.375rem;
+}
+
+.fi-icon-hub-scroll {
+    position: relative;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    block-size: min(60vh, 32rem);
+    margin-inline: -0.25rem;
+    padding: 0.25rem;
+}
+
+/* Grid -------------------------------------------------------------------- */
+
+.fi-icon-hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--icon-hub-item-size), 1fr));
+    gap: 0.375rem;
+}
+
+.fi-icon-hub-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    min-block-size: var(--icon-hub-item-size);
+    min-inline-size: 2.75rem;
+    padding: 0.5rem 0.25rem;
+    border-radius: 0.5rem;
+    color: var(--gray-700);
+    cursor: pointer;
+    user-select: none;
+    outline: 1px solid transparent;
+    transition: background-color 75ms, outline-color 75ms;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.fi-icon-hub-item:hover {
+    background-color: var(--gray-50);
+}
+
+.fi-icon-hub-item:focus-visible {
+    outline: 2px solid var(--primary-600);
+    outline-offset: -2px;
+}
+
+.fi-icon-hub-item.fi-selected {
+    background-color: var(--primary-50);
+    color: var(--primary-700);
+    outline-color: var(--primary-600);
+}
+
+.dark .fi-icon-hub-item {
+    color: var(--gray-200);
+}
+
+.dark .fi-icon-hub-item:hover {
+    background-color: color-mix(in oklab, #fff 5%, transparent);
+}
+
+.dark .fi-icon-hub-item.fi-selected {
+    background-color: color-mix(in oklab, var(--primary-400) 15%, transparent);
+    color: var(--primary-300);
+    outline-color: var(--primary-400);
+}
+
+.fi-icon-hub-item-icon {
+    display: inline-flex;
+    inline-size: var(--icon-hub-icon-size);
+    block-size: var(--icon-hub-icon-size);
+}
+
+.fi-icon-hub-item-label {
+    display: -webkit-box;
+    overflow: hidden;
+    max-inline-size: 100%;
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    text-align: center;
+    word-break: break-word;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.fi-icon-hub-skeleton {
+    display: block;
+    block-size: var(--icon-hub-item-size);
+    border-radius: 0.5rem;
+    background-color: var(--gray-100);
+    animation: fi-icon-hub-pulse 1.4s ease-in-out infinite;
+}
+
+.dark .fi-icon-hub-skeleton {
+    background-color: color-mix(in oklab, #fff 5%, transparent);
+}
+
+@keyframes fi-icon-hub-pulse {
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fi-icon-hub-skeleton {
+        animation: none;
+    }
+}
+
+/* States ------------------------------------------------------------------ */
+
+.fi-icon-hub-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-block-size: 12rem;
+    color: var(--gray-400);
+    text-align: center;
+}
+
+.fi-icon-hub-empty-heading {
+    color: var(--gray-600);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.dark .fi-icon-hub-empty-heading {
+    color: var(--gray-300);
+}
+
+.fi-icon-hub-sentinel {
+    block-size: 1px;
+}
+
+.fi-icon-hub-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding-block: 0.75rem;
+    color: var(--gray-500);
+    font-size: 0.8125rem;
+}
+
+.fi-icon-hub-spinner {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+}
+
+.fi-icon-hub-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    inline-size: 100%;
+}
+
+.fi-icon-hub-count {
+    color: var(--gray-500);
+    font-size: 0.875rem;
+}
+
+/* Small screens: larger modal body and denser grid ------------------------ */
+
+@media (max-width: 40rem) {
+    .fi-icon-hub-picker {
+        --icon-hub-item-size: 3.75rem;
+    }
+
+    .fi-icon-hub-scroll {
+        block-size: min(65dvh, 32rem);
+    }
+
+    .fi-icon-hub-item-label {
+        display: none;
+    }
+}
+
+/* Table column / infolist entry ------------------------------------------ */
+
+.fi-icon-hub-display {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.fi-icon-hub-display-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.fi-icon-hub-display-icon {
+    display: inline-flex;
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+}
+
+.fi-icon-hub-display-icon > svg,
+.fi-icon-hub-display-icon > img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+}
+
+.fi-icon-hub-display.fi-size-sm .fi-icon-hub-display-icon {
+    inline-size: 1rem;
+    block-size: 1rem;
+}
+
+.fi-icon-hub-display.fi-size-lg .fi-icon-hub-display-icon {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+}
+
+.fi-icon-hub-display.fi-size-xl .fi-icon-hub-display-icon {
+    inline-size: 2rem;
+    block-size: 2rem;
+}
+
+.fi-icon-hub-display-label {
+    font-size: 0.875rem;
+}
